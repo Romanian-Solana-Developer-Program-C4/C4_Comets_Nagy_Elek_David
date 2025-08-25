@@ -1,0 +1,29 @@
+{
+  "name": "c4_comets_nagy_elek_david",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@solana-developers/helpers": "^2.8.1",
+    "@solana/spl-memo": "^0.2.5",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
+    "dotenv": "^17.2.1",
+    "esrun": "^3.2.30"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Romanian-Solana-Developer-Program-C4/C4_Comets_Nagy_Elek_David.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Romanian-Solana-Developer-Program-C4/C4_Comets_Nagy_Elek_David/issues"
+  },
+  "homepage": "https://github.com/Romanian-Solana-Developer-Program-C4/C4_Comets_Nagy_Elek_David#readme"
+}
