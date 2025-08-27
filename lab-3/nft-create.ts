@@ -37,7 +37,7 @@ async function createMyNFT() {
       name: 'Commets C4 NFT',
       mint, // the mint account signer
       authority: signer, // who has authority over this NFT
-      sellerFeeBasisPoints: percentAmount(11), // 10%
+      sellerFeeBasisPoints: percentAmount(10), // 10%
       isCollection: false,
       uri: METADATA_URI,
     });
