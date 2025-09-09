@@ -14,5 +14,7 @@ node_modules/
 .vscode/
 .idea/
 
+# Rust
+Cargo.lock
 
 .DS_Store
