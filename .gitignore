@@ -14,5 +14,10 @@ node_modules/
 .vscode/
 .idea/
 
+# Rust
+Cargo.lock
 
 .DS_Store
+
+# Rustlings
+lab-4/rustlings/solutions
