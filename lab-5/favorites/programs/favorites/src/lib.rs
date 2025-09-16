@@ -5,6 +5,9 @@ use anchor_lang::prelude::*;
 
 declare_id!("FyNhvMsRVReL6akKr4mjKZRV2hmxk7JTKEsXZdjoSfeG");
 
+// Anchor accounts use 8 bytes to determine their type
+pub const ANCHOR_ACCOUNT_DISCRIMINATOR_LENGTH: usize = 8;
+
 #[program]
 pub mod favorites {
     use super::*;
@@ -28,8 +31,8 @@ pub struct SetFavorite<'info> {
     #[account(
         init,
         payer = user,
-        space = 8 + Favorites::INIT_SPACE,
-        seeds = [b"favorites".as_ref(), user.key().as_ref()],
+        space = ANCHOR_ACCOUNT_DISCRIMINATOR_LENGTH + Favorites::INIT_SPACE,
+        seeds = [b"favorites", user.key().as_ref()],
         bump
     )]
     pub favorites: Account<'info, Favorites>,
