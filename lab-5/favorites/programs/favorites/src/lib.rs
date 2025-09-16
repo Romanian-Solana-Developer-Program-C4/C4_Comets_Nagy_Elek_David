@@ -12,6 +12,7 @@ pub const ANCHOR_ACCOUNT_DISCRIMINATOR_LENGTH: usize = 8;
 pub mod favorites {
     use super::*;
 
+
     pub fn set_favorites(
         ctx: Context<SetFavorites>,
         number: u64,
