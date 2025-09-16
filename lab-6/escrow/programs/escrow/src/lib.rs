@@ -1,3 +1,6 @@
+#![allow(unexpected_cfgs)]
+#![allow(deprecated)] // optional, silences internal realloc warning
+
 pub mod constants;
 pub mod error;
 pub mod instructions;
