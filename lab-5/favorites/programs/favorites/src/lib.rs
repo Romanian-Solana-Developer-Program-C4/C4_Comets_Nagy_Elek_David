@@ -12,19 +12,28 @@ pub const ANCHOR_ACCOUNT_DISCRIMINATOR_LENGTH: usize = 8;
 pub mod favorites {
     use super::*;
 
-    pub fn set_favorite(ctx: Context<SetFavorite>) -> Result<()> {
-        let favorite = &mut ctx.accounts.favorites;
+    pub fn set_favorites(
+        ctx: Context<SetFavorites>,
+        number: u64,
+        color: String,
+        hobbies: Vec<String>,
+    ) -> Result<()> {
+        // let user_pubkey = ctx.accounts.user.key();
+        msg!("Greetings from {}", ctx.program_id);
+        msg!("User {ctx.accounts.user.key()}'s favorite number is {number}, favorite color is {color}, and favorite hobbies are {hobbies}");
 
-        // On-chain logic: store numbers and color
-        favorite.number = 1;
-        favorite.color = 2;
+        ctx.accounts.favorites.set_inner(Favorites {
+            number,
+            color,
+            hobbies,
+        });
 
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct SetFavorite<'info> {
+pub struct SetFavorites<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
@@ -44,8 +53,10 @@ pub struct SetFavorite<'info> {
 #[derive(InitSpace)]
 pub struct Favorites {
     pub number: u64,
-    pub color: u8,
+
+    #[max_len(50)]
+    pub color: String,
+
     #[max_len(5, 50)]
     pub hobbies: Vec<String>, // stored in account heap, BPF-safe
-    pub user: Pubkey,
 }
