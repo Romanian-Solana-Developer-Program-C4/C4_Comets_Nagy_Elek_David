@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "programs/*"
+    "./programs/favorites",
 ]
 resolver = "2"
 
