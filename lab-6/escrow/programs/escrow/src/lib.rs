@@ -7,9 +7,10 @@ pub mod instructions;
 pub mod state;
 
 use anchor_lang::prelude::*;
+use anchor_spl::associated_token::AssociatedToken;
 
 pub use constants::*;
-pub use instructions::*;
+// pub use instructions::*;
 pub use state::*;
 
 declare_id!("DaWd2LYWf1pvUuRZBToqajv2UpaCST6mXBK9bUiNz9J8");
@@ -18,7 +19,20 @@ declare_id!("DaWd2LYWf1pvUuRZBToqajv2UpaCST6mXBK9bUiNz9J8");
 pub mod escrow {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn make_offer(ctx: Context<MakeOffer>) -> Result<()> {
+        msg!("Make offer");
+        Ok(())
     }
+
+    pub fn take_offer(ctx: Context<TakeOffer>) -> Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct MakeOffer<'info> {
+    // Define your accounts here
+    #[account(mut)]
+    pub user: Signer<'info>,
+    // Add other accounts as needed
 }
