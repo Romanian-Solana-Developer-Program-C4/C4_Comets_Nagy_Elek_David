@@ -22,7 +22,7 @@ pub mod escrow {
 
     pub fn make_offer(
         ctx: Context<MakeOffer>,
-        id: u64,
+        // _id: u64,
         token_a_offered_amount: u64,
         token_b_wanted_amount: u64,
     ) -> Result<()> {
@@ -32,7 +32,7 @@ pub mod escrow {
             maker: ctx.accounts.maker.key(),
             token_a_mint: ctx.accounts.token_a_mint.key(),
             token_b_mint: ctx.accounts.token_b_mint.key(),
-            token_a_offered_amount: 0, // TODO
+            token_a_offered_amount,
             token_b_wanted_amount,
             // bump: ctx.accounts.offer.bump,
         });
