@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
-use anchor_spl::token::{Mint, Token, TokenAccount};
+use anchor_spl::token::{Mint, TokenAccount};
+use anchor_spl::token_interface::TokenInterface;
 
 // use crate::state::Offer;
 use crate::{Offer, ANCHOR_DISCRIMINATOR};
@@ -41,7 +42,7 @@ pub struct MakeOffer<'info> {
     )]
     pub vault: Account<'info, TokenAccount>,
 
-    pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>,
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
 }

@@ -7,6 +7,7 @@ pub mod instructions;
 pub mod state;
 
 use anchor_lang::prelude::*;
+use anchor_spl::token::{transfer_checked, TransferChecked};
 
 pub use constants::*;
 pub use instructions::*;
@@ -16,27 +17,28 @@ declare_id!("DaWd2LYWf1pvUuRZBToqajv2UpaCST6mXBK9bUiNz9J8");
 
 #[program]
 pub mod escrow {
-    use anchor_spl::token::{transfer_checked, TransferChecked};
-
     use super::*;
 
     pub fn make_offer(
         ctx: Context<MakeOffer>,
-        // _id: u64,
+        id: u64,
         token_a_offered_amount: u64,
         token_b_wanted_amount: u64,
     ) -> Result<()> {
         msg!("Make offer");
 
+        // Save offer
         ctx.accounts.offer.set_inner(Offer {
+            id,
             maker: ctx.accounts.maker.key(),
             token_a_mint: ctx.accounts.token_a_mint.key(),
             token_b_mint: ctx.accounts.token_b_mint.key(),
             token_a_offered_amount,
             token_b_wanted_amount,
-            // bump: ctx.accounts.offer.bump,
+            bump: ctx.accounts.offer.bump,
         });
 
+        // Transfer tokens to vault
         let transfer_accounts = TransferChecked {
             from: ctx.accounts.maker_token_a_account.to_account_info(),
             to: ctx.accounts.vault.to_account_info(),
