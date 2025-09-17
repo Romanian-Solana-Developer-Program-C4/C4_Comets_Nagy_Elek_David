@@ -2,8 +2,8 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
-use crate::state::Offer;
-use crate::ANCHOR_DISCRIMINATOR;
+// use crate::state::Offer;
+use crate::{Offer, ANCHOR_DISCRIMINATOR};
 
 #[derive(Accounts)]
 #[instruction(id: u64)]
@@ -35,8 +35,8 @@ pub struct MakeOffer<'info> {
 
     #[account(init,
         payer = maker,
-        associated_token::mint = token_b_mint,
-        associated_token::authority = maker,
+        associated_token::mint = token_a_mint,
+        associated_token::authority = offer,
         associated_token::token_program = token_program,
     )]
     pub vault: Account<'info, TokenAccount>,
