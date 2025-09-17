@@ -17,7 +17,7 @@ pub struct MakeOffer<'info> {
         associated_token::authority = maker,
         associated_token::token_program = token_program,
     )]
-    pub maker_token_a_account: InterfaceAccount<'info, TokenAccount>,
+    pub maker_token_a_account: Account<'info, TokenAccount>,
 
     #[account(
         init,
@@ -34,7 +34,7 @@ pub struct MakeOffer<'info> {
         associated_token::authority = maker,
         associated_token::token_program = token_program,
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Account<'info, TokenAccount>,
 
     pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>,

@@ -10,7 +10,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 
 pub use constants::*;
-// pub use instructions::*;
+pub use instructions::{MakeOffer, TakeOffer};
 pub use state::*;
 
 declare_id!("DaWd2LYWf1pvUuRZBToqajv2UpaCST6mXBK9bUiNz9J8");
