@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 #[account]
 #[derive(InitSpace)]
 pub struct Offer {
-    // pub id: u64,
+    pub id: u64,
     pub maker: Pubkey,
     pub token_a_mint: Pubkey,
     pub token_b_mint: Pubkey,
@@ -11,5 +11,5 @@ pub struct Offer {
     // pub token_b_amount: u64,
     pub token_a_offered_amount: u64,
     pub token_b_wanted_amount: u64,
-    // pub bump: u8,
+    pub bump: u8,
 }
