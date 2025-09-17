@@ -7,6 +7,6 @@ cargo clean >/dev/null 2>&1
 
 echo "Cleaning frontend dependencies..."
 rm -rf node_modules >/dev/null 2>&1
-rm -f package-lock.json yarn.lock >/dev/null 2>&1
+rm -f package-lock.json yarn.lock Cargo.lock >/dev/null 2>&1
 
 echo "Clean complete ✅"
