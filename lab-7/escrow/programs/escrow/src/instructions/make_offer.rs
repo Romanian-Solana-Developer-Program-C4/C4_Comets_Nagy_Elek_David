@@ -45,8 +45,7 @@ pub fn handler(
         cpi_context,
         token_a_offered_amount,
         ctx.accounts.token_a_mint.decimals,
-    )
-    .unwrap();
+    )?;
 
     Ok(())
 }
