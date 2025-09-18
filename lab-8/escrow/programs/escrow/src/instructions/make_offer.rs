@@ -7,7 +7,7 @@ use anchor_spl::token_interface::{
 // use crate::state::Offer;
 use crate::{Offer, ANCHOR_DISCRIMINATOR};
 
-pub fn handler(
+pub fn make_offer_handler(
     ctx: Context<MakeOffer>,
     id: u64,
     token_a_offered_amount: u64,
@@ -65,17 +65,14 @@ pub struct MakeOffer<'info> {
     #[account(mut,
         associated_token::mint = token_a_mint,
         associated_token::authority = maker,
-        associated_token::token_program = token_program,
-    )]
+        associated_token::token_program = token_program)]
     pub maker_token_a_account: InterfaceAccount<'info, TokenAccount>,
 
-    #[account(
-        init,
+    #[account(init,
         payer = maker,
         seeds = [b"offer".as_ref(), maker.key().as_ref(), id.to_le_bytes().as_ref()],
         space = ANCHOR_DISCRIMINATOR + Offer::INIT_SPACE,
-        bump
-    )]
+        bump)]
     pub offer: Account<'info, Offer>,
 
     #[account(init,

@@ -12,7 +12,7 @@ use anchor_spl::token_interface::{
 
 use crate::Offer;
 
-pub fn handler(ctx: Context<TakeOffer>, _id: u64) -> Result<()> {
+pub fn take_offer_handler(ctx: Context<TakeOffer>, _id: u64) -> Result<()> {
     msg!("Take offer");
     // taker sends token B to maker
     // vault sends token A to taker
@@ -87,10 +87,14 @@ pub struct TakeOffer<'info> {
         has_one = token_b_mint,
         has_one = token_a_mint,
         seeds = [b"offer".as_ref(), maker.key().as_ref(), offer.id.to_le_bytes().as_ref()],
-        bump,
+        bump = offer.bump,
     )]
     pub offer: Account<'info, Offer>,
 
+    #[account(mut,
+        associated_token::mint = token_a_mint,
+        associated_token::authority = offer,
+        associated_token::token_program = token_program,)]
     pub vault: InterfaceAccount<'info, TokenAccount>,
 
     pub system_program: Program<'info, System>,
