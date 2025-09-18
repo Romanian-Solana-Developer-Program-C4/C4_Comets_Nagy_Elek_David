@@ -1,8 +1,14 @@
 use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
-use anchor_spl::token::{transfer_checked, TransferChecked};
-use anchor_spl::token::{Mint, TokenAccount};
-use anchor_spl::token_interface::TokenInterface;
+use anchor_spl::token_interface::{
+    // close_account,
+    transfer_checked,
+    Mint,
+    // CloseAccount,
+    TokenAccount,
+    TokenInterface,
+    TransferChecked,
+};
 
 use crate::Offer;
 
@@ -49,31 +55,43 @@ pub struct TakeOffer<'info> {
     pub maker: SystemAccount<'info>,
 
     #[account(mint::token_program = token_program)]
-    pub token_a_mint: Account<'info, Mint>,
+    pub token_a_mint: InterfaceAccount<'info, Mint>,
     #[account(mint::token_program = token_program)]
-    pub token_b_mint: Account<'info, Mint>,
+    pub token_b_mint: InterfaceAccount<'info, Mint>,
 
-    #[account(mut,
+    #[account(init_if_needed,
+        payer = taker,
         associated_token::mint = token_a_mint,
         associated_token::authority = taker,
         associated_token::token_program = token_program,
     )]
-    pub taker_token_a_account: Account<'info, TokenAccount>,
+    pub taker_token_a_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(mut,
         associated_token::mint = token_b_mint,
         associated_token::authority = taker,
         associated_token::token_program = token_program,
     )]
-    pub taker_token_b_account: Account<'info, TokenAccount>,
+    pub taker_token_b_account: InterfaceAccount<'info, TokenAccount>,
 
-    #[account(
-        seeds = [b"offer".as_ref(), maker.key().as_ref(), id.to_le_bytes().as_ref()],
+    #[account(init_if_needed,
+        payer = taker,
+        associated_token::mint = token_b_mint,
+        associated_token::authority = maker,
+        associated_token::token_program = token_program)]
+    pub maker_token_b_account: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(mut,
+        close = maker,
+        has_one = maker,
+        has_one = token_b_mint,
+        has_one = token_a_mint,
+        seeds = [b"offer".as_ref(), maker.key().as_ref(), offer.id.to_le_bytes().as_ref()],
         bump,
     )]
     pub offer: Account<'info, Offer>,
 
-    pub vault: Account<'info, TokenAccount>,
+    pub vault: InterfaceAccount<'info, TokenAccount>,
 
     pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>,

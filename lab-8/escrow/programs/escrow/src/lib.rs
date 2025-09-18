@@ -7,7 +7,6 @@ pub mod instructions;
 pub mod state;
 
 use anchor_lang::prelude::*;
-use anchor_spl::token::{transfer_checked, TransferChecked};
 
 pub use constants::*;
 pub use instructions::*;
@@ -29,7 +28,7 @@ pub mod escrow {
         token_a_offered_amount: u64,
         token_b_wanted_amount: u64,
     ) -> Result<()> {
-        make_offer::handler(ctx, id, token_a_offered_amount, token_b_wanted_amount)
+        instructions::make_offer::handler(ctx, id, token_a_offered_amount, token_b_wanted_amount)
     }
 
     pub fn take_offer(_ctx: Context<TakeOffer>) -> Result<()> {
