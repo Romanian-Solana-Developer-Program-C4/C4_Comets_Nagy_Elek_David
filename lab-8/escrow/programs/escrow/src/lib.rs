@@ -7,6 +7,7 @@ pub mod instructions;
 pub mod state;
 
 use anchor_lang::prelude::*;
+use anchor_spl::token::{transfer_checked, TransferChecked};
 
 pub use constants::*;
 pub use instructions::*;
