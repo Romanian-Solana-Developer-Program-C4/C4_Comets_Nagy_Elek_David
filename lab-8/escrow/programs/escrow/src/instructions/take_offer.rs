@@ -10,20 +10,28 @@ use anchor_spl::token_interface::{
     TransferChecked,
 };
 
-use crate::Offer;
+use crate::{ErrorCode, Offer};
 
 pub fn take_offer_handler(ctx: Context<TakeOffer>, _id: u64) -> Result<()> {
     msg!("Take offer");
     // taker sends token B to maker
     // vault sends token A to taker
 
-    let signer_seeds: &[&[&[u8]]] = &[&[
+    let offer = &ctx.accounts.offer;
+    let vault_token_a_amount = ctx.accounts.vault.amount;
+
+    require!(
+        vault_token_a_amount >= offer.token_a_offered_amount,
+        ErrorCode::InvalidAmount
+    );
+
+    let signer_seeds: [&[&[u8]]; 1] = [&[
         b"offer".as_ref(),
         ctx.accounts.maker.to_account_info().key.as_ref(),
         &ctx.accounts.offer.id.to_le_bytes(),
         &[ctx.accounts.offer.bump],
     ]];
-
+    // transfer token A from vault to taker
     let transfer_accounts = TransferChecked {
         from: ctx.accounts.vault.to_account_info(),
         to: ctx.accounts.taker_token_a_account.to_account_info(),
@@ -34,13 +42,36 @@ pub fn take_offer_handler(ctx: Context<TakeOffer>, _id: u64) -> Result<()> {
     let cpi_context = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         transfer_accounts,
-        signer_seeds,
+        &signer_seeds,
     );
     transfer_checked(
         cpi_context,
         ctx.accounts.offer.token_a_offered_amount,
         ctx.accounts.token_a_mint.decimals,
     )?;
+
+    // transfer token B from taker to maker
+    let transfer_accounts = TransferChecked {
+        from: ctx.accounts.taker_token_b_account.to_account_info(),
+        to: ctx.accounts.maker_token_b_account.to_account_info(),
+        mint: ctx.accounts.token_b_mint.to_account_info(),
+        authority: ctx.accounts.taker.to_account_info(),
+    };
+
+    let cpi_context = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        transfer_accounts,
+    );
+    transfer_checked(
+        cpi_context,
+        ctx.accounts.offer.token_b_wanted_amount,
+        ctx.accounts.token_b_mint.decimals,
+    )?;
+
+    // close vault
+    ctx.accounts
+        .vault
+        .close(ctx.accounts.maker.to_account_info())?;
 
     Ok(())
 }
