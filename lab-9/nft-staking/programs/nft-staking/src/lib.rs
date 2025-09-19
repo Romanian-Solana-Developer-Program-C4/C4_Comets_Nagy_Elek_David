@@ -27,4 +27,14 @@ pub mod nft_staking {
                 .initialize_config(max_stake, freeze_period, points_per_stake, &ctx.bumps);
         Ok(())
     }
+
+    pub fn initialize_user(ctx: Context<InitializeUser>) -> Result<()> {
+        msg!(
+            "Initialize user acount from program id: {:?}",
+            ctx.program_id
+        );
+
+        let _ = ctx.accounts.initialize_user(&ctx.bumps);
+        Ok(())
+    }
 }
