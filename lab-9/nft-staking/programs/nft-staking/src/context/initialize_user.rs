@@ -1,9 +1,6 @@
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)] // optional, silences internal realloc warning
-
 use crate::state::UserAccount;
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Mint, Token};
+// use anchor_spl::token::{Mint, Token};
 
 #[derive(Accounts)]
 pub struct InitializeUser<'info> {
@@ -23,11 +20,11 @@ pub struct InitializeUser<'info> {
 }
 
 impl<'info> InitializeUser<'info> {
-    pub fn initialize_user(&mut self, bump: &InitializeUserBumps) -> Result<()> {
+    pub fn initialize_user(&mut self, bumps: &InitializeUserBumps) -> Result<()> {
         self.user_account.set_inner(UserAccount {
             points: 0,
             amount_staked: 0,
-            bump: bump.user_account,
+            bump: bumps.user_account,
         });
 
         Ok(())

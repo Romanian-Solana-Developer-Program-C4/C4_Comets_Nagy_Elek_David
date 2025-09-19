@@ -1,6 +1,3 @@
-#![allow(unexpected_cfgs)]
-#![allow(deprecated)] // optional, silences internal realloc warning
-
 use anchor_lang::prelude::*;
 
 #[account]

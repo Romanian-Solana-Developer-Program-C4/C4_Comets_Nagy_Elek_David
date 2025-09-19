@@ -1,0 +1,13 @@
+# rustfmt.toml — tuned for Anchor programs
+
+# Maximum line width
+max_width = 80
+
+# Indentation style
+hard_tabs = false
+tab_spaces = 4
+
+# Force earlier wrapping so lines don’t hit 80 chars
+fn_call_width = 60
+attr_fn_like_width = 70
+struct_lit_width = 18
