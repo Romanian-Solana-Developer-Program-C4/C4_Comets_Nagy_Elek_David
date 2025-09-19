@@ -5,10 +5,12 @@ use anchor_lang::prelude::*;
 declare_id!("AESehE9tH7VxNKfcBspX7ZkE3F5zupjHNFMhn9edrw5t");
 
 pub mod context;
+pub mod errors;
 pub mod state;
 
 pub use context::*;
-// pub use state::*;
+pub use errors::*;
+pub use state::*;
 
 #[program]
 pub mod nft_staking {

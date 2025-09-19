@@ -40,6 +40,7 @@ impl<'info> InitializeConfig<'info> {
         bumps: &InitializeConfigBumps,
     ) -> Result<()> {
         self.stake_config.set_inner(StakeConfig {
+            authority: self.authority.key(),
             max_stake,
             freeze_period,
             points_per_stake,
