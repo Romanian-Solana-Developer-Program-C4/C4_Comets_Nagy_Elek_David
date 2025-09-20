@@ -54,4 +54,10 @@ pub mod nft_staking {
 
         ctx.accounts.unstake(&ctx.bumps)
     }
+
+    pub fn claim(ctx: Context<Claim>) -> Result<()> {
+        msg!("Claiming from program id: {:?}", ctx.program_id);
+
+        ctx.accounts.claim()
+    }
 }

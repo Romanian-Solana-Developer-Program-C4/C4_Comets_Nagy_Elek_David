@@ -25,8 +25,6 @@ pub struct Unstake<'info> {
     )]
     pub mint_ata: Account<'info, TokenAccount>,
 
-    pub collection_mint: Account<'info, Mint>,
-
     #[account(mut,
         // same seed as user_account same account [!]
         seeds = [b"user".as_ref(), user.key().as_ref()],
@@ -38,8 +36,6 @@ pub struct Unstake<'info> {
         seeds = [b"metadata", metadata_program.key().as_ref(), mint.key().as_ref()],
         seeds::program = metadata_program.key(),
         bump,
-        constraint = metadata.collection.as_ref().unwrap().key.as_ref() == collection_mint.key().as_ref(),
-        constraint = metadata.collection.as_ref().unwrap().verified,
     )]
     pub metadata: Account<'info, MetadataAccount>,
 
@@ -57,10 +53,9 @@ pub struct Unstake<'info> {
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
-    #[account(mut,
+    #[account(
         seeds = [b"config".as_ref(), config.key().as_ref()],
         bump = config.bump,
-
     )]
     pub config: Account<'info, StakeConfig>,
 
