@@ -65,7 +65,8 @@ pub struct Unstake<'info> {
 }
 
 impl<'info> Unstake<'info> {
-    pub fn unstake(&mut self, bumps: &UnstakeBumps) -> Result<()> {
+    // pub fn unstake(&mut self, bumps: &UnstakeBumps) -> Result<()> {
+    pub fn unstake(&mut self) -> Result<()> {
         let time_elapsed =
             Clock::get().unwrap().unix_timestamp - self.stake_account.staked_at;
 
