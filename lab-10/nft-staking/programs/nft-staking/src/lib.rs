@@ -19,14 +19,17 @@ pub mod nft_staking {
     pub fn initialize(
         ctx: Context<InitializeConfig>,
         max_stake: u8,
-        freeze_period: i32,
+        freeze_period: i64,
         points_per_stake: u8,
     ) -> Result<()> {
         msg!("Initialize staking program: {:?}", ctx.program_id);
 
-        let _ =
-            ctx.accounts
-                .initialize_config(max_stake, freeze_period, points_per_stake, &ctx.bumps);
+        let _ = ctx.accounts.initialize_config(
+            max_stake,
+            freeze_period,
+            points_per_stake,
+            &ctx.bumps,
+        );
         Ok(())
     }
 
@@ -38,5 +41,17 @@ pub mod nft_staking {
 
         let _ = ctx.accounts.initialize_user(&ctx.bumps);
         Ok(())
+    }
+
+    pub fn stake(ctx: Context<Stake>) -> Result<()> {
+        msg!("Staking from program id: {:?}", ctx.program_id);
+
+        ctx.accounts.stake(&ctx.bumps)
+    }
+
+    pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
+        msg!("Unstaking from program id: {:?}", ctx.program_id);
+
+        ctx.accounts.unstake(&ctx.bumps)
     }
 }
