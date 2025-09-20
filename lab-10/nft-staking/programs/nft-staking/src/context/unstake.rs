@@ -2,18 +2,18 @@ use anchor_lang::prelude::*;
 use anchor_spl::{
     metadata::{
         mpl_token_metadata::instructions::{
-            FreezeDelegatedAccountCpi, FreezeDelegatedAccountCpiAccounts,
+            ThawDelegatedAccountCpi, ThawDelegatedAccountCpiAccounts,
         },
         MasterEditionAccount, Metadata, MetadataAccount,
     },
-    token::{approve, Approve, Mint, Token, TokenAccount},
+    token::{revoke, Mint, Revoke, Token, TokenAccount},
 };
 
 use crate::errors::*;
 use crate::state::{StakeAccount, StakeConfig, UserAccount};
 
 #[derive(Accounts)]
-pub struct Stake<'info> {
+pub struct Unstake<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
@@ -24,8 +24,6 @@ pub struct Stake<'info> {
         associated_token::authority = user,
     )]
     pub mint_ata: Account<'info, TokenAccount>,
-
-    pub collection_mint: Account<'info, Mint>,
 
     #[account(mut,
         // same seed as user_account same account [!]
@@ -38,8 +36,6 @@ pub struct Stake<'info> {
         seeds = [b"metadata", metadata_program.key().as_ref(), mint.key().as_ref()],
         seeds::program = metadata_program.key(),
         bump,
-        constraint = metadata.collection.as_ref().unwrap().key.as_ref() == collection_mint.key().as_ref(),
-        constraint = metadata.collection.as_ref().unwrap().verified,
     )]
     pub metadata: Account<'info, MetadataAccount>,
 
@@ -50,18 +46,16 @@ pub struct Stake<'info> {
     )]
     pub edition: Account<'info, MasterEditionAccount>,
 
-    #[account(init,
-        payer = user,
-        space = 8 + StakeAccount::INIT_SPACE,
+    #[account(mut,
         seeds = [b"receipt".as_ref(), user.key().as_ref(), mint.key().as_ref()],
-        bump
+        bump,
+        // constraint = stake_account.owner.key().as_ref() == user.key().as_ref(),
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
-    #[account(mut,
+    #[account(
         seeds = [b"config".as_ref(), config.key().as_ref()],
         bump = config.bump,
-
     )]
     pub config: Account<'info, StakeConfig>,
 
@@ -70,30 +64,19 @@ pub struct Stake<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Stake<'info> {
-    pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
+impl<'info> Unstake<'info> {
+    // pub fn unstake(&mut self, bumps: &UnstakeBumps) -> Result<()> {
+    pub fn unstake(&mut self) -> Result<()> {
+        let time_elapsed =
+            Clock::get().unwrap().unix_timestamp - self.stake_account.staked_at;
+
         require!(
-            self.user_account.amount_staked < self.config.max_stake,
-            StakeError::MaxStakeReached
+            time_elapsed >= self.config.freeze_period,
+            StakeError::FreezePeriodNotElapsed
         );
 
-        self.stake_account.set_inner(StakeAccount {
-            owner: self.user.key(),
-            mint: self.mint.key(),
-            staked_at: Clock::get().unwrap().unix_timestamp,
-            bump: bumps.stake_account,
-        });
-
-        let cpi_program = self.token_program.to_account_info();
-        let cpi_accounts = Approve {
-            to: self.mint_ata.to_account_info(),
-            delegate: self.stake_account.to_account_info(),
-            authority: self.user.to_account_info(),
-        };
-
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-
-        approve(cpi_ctx, 1)?;
+        self.user_account.points +=
+            (time_elapsed as u64) * (self.config.points_per_stake as u64);
 
         let seeds = &[
             b"stake",
@@ -111,7 +94,7 @@ impl<'info> Stake<'info> {
         let token_program = &self.token_program.to_account_info();
         let metadata_program = &self.metadata_program.to_account_info();
 
-        let freeze_accounts = FreezeDelegatedAccountCpiAccounts {
+        let thaw_accounts = ThawDelegatedAccountCpiAccounts {
             delegate,
             token_account,
             edition,
@@ -119,10 +102,22 @@ impl<'info> Stake<'info> {
             token_program,
         };
 
-        FreezeDelegatedAccountCpi::new(metadata_program, freeze_accounts)
+        ThawDelegatedAccountCpi::new(metadata_program, thaw_accounts)
             .invoke_signed(signer_seeds)?;
 
-        self.user_account.amount_staked += 1;
+        let revoke_accounts = Revoke {
+            source: self.mint_ata.to_account_info(),
+            authority: self.user.to_account_info(),
+        };
+
+        let cpi_ctx = CpiContext::new(
+            self.token_program.to_account_info(),
+            revoke_accounts,
+        );
+
+        revoke(cpi_ctx)?;
+
+        self.user_account.amount_staked -= 1;
 
         Ok(())
     }

@@ -35,7 +35,7 @@ impl<'info> InitializeConfig<'info> {
     pub fn initialize_config(
         &mut self,
         max_stake: u8,
-        freeze_period: i32,
+        freeze_period: i64,
         points_per_stake: u8,
         bumps: &InitializeConfigBumps,
     ) -> Result<()> {
